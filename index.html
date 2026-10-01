@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interactive PDF Reader</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="site-nav" aria-label="Main navigation">
+  <a class="site-brand" href="#home-page" data-home-target="home-page" aria-label="Interactive PDF Reader home">
+    <span class="site-brand-mark" aria-hidden="true">IP</span>
+    <span>Interactive PDF Reader</span>
+  </a>
+  <div class="site-nav-links">
+    <a href="#home-page" data-home-target="home-page">PDF Reader</a>
+    <a href="#home-features" data-home-target="home-features">Features &amp; Tools</a>
+    <a href="#home-guide" data-home-target="home-guide">How it works</a>
+    <a href="#home-contact" data-home-target="home-contact">Contact</a>
+  </div>
+  <button id="nav-open" class="site-nav-cta" type="button">Open a PDF <span aria-hidden="true">→</span></button>
+</nav>
+<dialog id="online-dialog" class="online-dialog" aria-labelledby="online-title">
+  <form id="online-form">
+    <div class="online-dialog-heading">
+      <div>
+        <span class="online-eyebrow">Open from a link</span>
+        <h2 id="online-title">Open online</h2>
+      </div>
+      <button id="online-close" class="online-close" type="button" aria-label="Close">×</button>
+    </div>
+    <p>Paste a web page URL to open it in a new tab, or a direct PDF link to read it here.</p>
+    <label for="online-url">Web page or PDF link</label>
+    <input id="online-url" name="url" type="url" placeholder="https://example.com/document.pdf" required>
+    <label for="online-kind">Open as</label>
+    <select id="online-kind" name="kind">
+      <option value="auto">Auto-detect from link</option>
+      <option value="page">Web page in a new tab</option>
+      <option value="pdf">PDF in this reader</option>
+    </select>
+    <p id="online-status" class="online-status" role="status" aria-live="polite"></p>
+    <div class="online-actions">
+      <button id="online-cancel" class="online-cancel" type="button">Cancel</button>
+      <button id="online-submit" class="online-submit" type="submit">Open link <span aria-hidden="true">→</span></button>
+    </div>
+  </form>
+</dialog>
+<header class="top">
+  <div class="brand" aria-label="Interactive PDF Reader">
+    <div>
+      <strong>Interactive</strong>
+      <small>PDF Reader</small>
+    </div>
+  </div>
+  <label class="btn">Open PDF<input id="file" type="file" accept="application/pdf" hidden></label>
+  <label class="btn">Open media<input id="media-file" type="file" accept="audio/*,video/*" hidden></label>
+  <button id="online-open" type="button">Open link</button>
+  <span id="media-title" class="media-title" aria-live="polite"></span>
+  <div class="group pdf-only">
+    <button id="prev" aria-label="Previous page">&lsaquo;</button>
+    <input id="pn" type="number" min="1" aria-label="Page number"> of <span id="pc">0</span>
+    <button id="next" aria-label="Next page">&rsaquo;</button>
+  </div>
+  <div class="group pdf-only">
+    <button id="zo" aria-label="Zoom out">&minus;</button><span id="zl">100%</span><button id="zi" aria-label="Zoom in">+</button>
+  </div>
+  <div class="group pdf-only" id="colors">
+    <span>Highlight</span>
+    <button class="sw" data-c="#FFD21A" style="background:#FFD21A" aria-label="Highlight yellow"></button>
+    <button class="sw" data-c="#48D16A" style="background:#48D16A" aria-label="Highlight green"></button>
+    <button class="sw" data-c="#42A5FF" style="background:#42A5FF" aria-label="Highlight blue"></button>
+    <button class="sw" data-c="#FF579A" style="background:#FF579A" aria-label="Highlight pink"></button>
+  </div>
+  <button id="bm" class="pdf-only">Bookmark page</button>
+  <button id="export" class="pdf-only">Back up</button>
+  <label class="btn pdf-only">Restore<input id="import" type="file" accept=".json" hidden></label>
+</header>
+<div id="bar"></div>
+<div class="layout">
+  <main id="stage">
+    <section id="home-page" class="home-page">
+      <div class="home-copy">
+        <span class="home-kicker"><span class="status-dot"></span> A calmer way to read</span>
+        <h1>Make every page<br><span>worth remembering.</span></h1>
+        <p class="home-description">Bring your PDFs into focus. Highlight the important parts, keep your thoughts close, and pick up right where you left off.</p>
+        <div class="home-actions">
+          <button id="home-open" class="home-primary" type="button"><span aria-hidden="true">＋</span> Open a PDF</button>
+          <button id="home-library" class="home-secondary" type="button">Browse library <span aria-hidden="true">→</span></button>
+          <button id="home-media" class="home-secondary" type="button">Play video or audio <span aria-hidden="true">▶</span></button>
+        </div>
+        <p class="home-private"><span aria-hidden="true">▣</span> Your documents stay on this device</p>
+      </div>
+      <div class="home-art">
+        <img class="reader-illustration" src="reader-illustration.svg" alt="An illustrated PDF reader with highlighted text, saved notes, and page controls">
+      </div>
+      <div id="home-features" class="home-features">
+        <article class="home-feature">
+          <span class="feature-icon feature-purple">✎</span>
+          <div><h2>Highlight with purpose</h2><p>Mark the ideas you want to find again.</p></div>
+        </article>
+        <article class="home-feature">
+          <span class="feature-icon feature-teal">↗</span>
+          <div><h2>Keep your place</h2><p>Bookmarks and reading progress are saved.</p></div>
+        </article>
+        <article class="home-feature">
+          <span class="feature-icon feature-peach">⌕</span>
+          <div><h2>Find it fast</h2><p>Search text across your open document.</p></div>
+        </article>
+      </div>
+      <section id="home-guide" class="home-guide" aria-labelledby="guide-title">
+        <h2 id="guide-title">How to open and view PDFs online for free</h2>
+        <div class="guide-steps">
+          <article class="guide-step">
+            <span class="step-number">1</span>
+            <h3>Select a PDF file</h3>
+            <p>Drag and drop your PDF onto the reader, or click to browse.</p>
+          </article>
+          <article class="guide-step">
+            <span class="step-number">2</span>
+            <h3>Read your PDF</h3>
+            <p>Scroll, zoom, search, highlight, and add notes as you read.</p>
+          </article>
+          <article class="guide-step">
+            <span class="step-number">3</span>
+            <h3>Save your progress</h3>
+            <p>Your reading progress stays here. Back up your notes whenever you need.</p>
+          </article>
+        </div>
+        <button id="guide-open" class="guide-cta" type="button">Read a PDF online now <span aria-hidden="true">→</span></button>
+      </section>
+      <section id="home-tools" class="home-tools" aria-labelledby="tools-title">
+        <div class="tools-heading">
+          <div>
+            <span class="tools-eyebrow">Everything you need to read</span>
+            <h2 id="tools-title">PDF tools, all in one place</h2>
+          </div>
+          <p>Open a document and pick up with the tools built into your reader.</p>
+        </div>
+        <div class="tool-groups">
+          <section class="tool-group" aria-labelledby="tool-read-title">
+            <h3 id="tool-read-title">Read &amp; annotate</h3>
+            <button class="tool-link" type="button" data-tool="open"><span class="tool-icon tool-blue" aria-hidden="true">PDF</span>PDF Reader<span class="tool-arrow" aria-hidden="true">↗</span></button>
+            <button class="tool-link" type="button" data-tool="notes"><span class="tool-icon tool-teal" aria-hidden="true">✎</span>Highlights &amp; notes<span class="tool-arrow" aria-hidden="true">↗</span></button>
+            <button class="tool-link" type="button" data-tool="find"><span class="tool-icon tool-cyan" aria-hidden="true">⌕</span>Search in PDF<span class="tool-arrow" aria-hidden="true">↗</span></button>
+            <button class="tool-link" type="button" data-tool="bms"><span class="tool-icon tool-purple" aria-hidden="true">▮</span>Bookmarks<span class="tool-arrow" aria-hidden="true">↗</span></button>
+          </section>
+          <section class="tool-group" aria-labelledby="tool-open-title">
+            <h3 id="tool-open-title">Open &amp; organize</h3>
+            <button class="tool-link" type="button" data-tool="media"><span class="tool-icon tool-orange" aria-hidden="true">▶</span>Play video or audio<span class="tool-arrow" aria-hidden="true">↗</span></button>
+            <button class="tool-link" type="button" data-tool="online"><span class="tool-icon tool-violet" aria-hidden="true">↗</span>Open PDF from a link<span class="tool-arrow" aria-hidden="true">↗</span></button>
+            <button class="tool-link" type="button" data-tool="lib"><span class="tool-icon tool-blue" aria-hidden="true">▤</span>My PDF library<span class="tool-arrow" aria-hidden="true">↗</span></button>
+            <button class="tool-link" type="button" data-tool="export"><span class="tool-icon tool-green" aria-hidden="true">↓</span>Back up notes &amp; progress<span class="tool-arrow" aria-hidden="true">↗</span></button>
+            <button class="tool-link" type="button" data-tool="import"><span class="tool-icon tool-orange" aria-hidden="true">↑</span>Restore a backup<span class="tool-arrow" aria-hidden="true">↗</span></button>
+          </section>
+          <aside class="tools-callout">
+            <span class="callout-mark" aria-hidden="true">✦</span>
+            <h3>Simple, private reading</h3>
+            <p>Your documents and reading notes stay in this browser. No account or upload required.</p>
+            <button type="button" data-tool="open" class="tools-callout-link">Choose a PDF <span aria-hidden="true">→</span></button>
+          </aside>
+        </div>
+      </section>
+      <section class="home-benefits" aria-labelledby="benefits-title">
+        <h2 id="benefits-title">Read PDFs Your Way</h2>
+        <div class="benefit-grid">
+          <article class="benefit-card">
+            <span class="benefit-icon">📖</span>
+            <h3>Read in Your Browser</h3>
+            <p>Open a PDF and start reading with smooth page navigation, zoom, and text selection.</p>
+          </article>
+          <article class="benefit-card">
+            <span class="benefit-icon">✦</span>
+            <h3>No Account Needed</h3>
+            <p>Get straight to your documents. No registration or sign-in required.</p>
+          </article>
+          <article class="benefit-card">
+            <span class="benefit-icon">🌐</span>
+            <h3>Your Documents Stay Local</h3>
+            <p>PDF files and reading notes are saved in this browser, not uploaded to an account.</p>
+          </article>
+          <article class="benefit-card">
+            <span class="benefit-icon">🌙</span>
+            <h3>Comfortable Reading</h3>
+            <p>The interface follows your device’s light or dark appearance preference.</p>
+          </article>
+          <article class="benefit-card">
+            <span class="benefit-icon">🔎</span>
+            <h3>Zoom & Search</h3>
+            <p>Adjust the page size and search for text in PDFs with a text layer.</p>
+          </article>
+          <article class="benefit-card">
+            <span class="benefit-icon">🔖</span>
+            <h3>Keep What Matters</h3>
+            <p>Highlight passages, add notes, bookmark pages, and back up your reading progress.</p>
+          </article>
+        </div>
+      </section>
+      <section id="home-contact" class="home-contact" aria-labelledby="contact-title">
+        <div class="contact-icon" aria-hidden="true">@</div>
+        <div class="contact-copy">
+          <h2 id="contact-title">Contact</h2>
+        </div>
+        <div id="contact-details" class="contact-details">
+          <button id="contact-toggle" class="contact-link" type="button" aria-expanded="false" aria-controls="contact-options">
+            Contact <span aria-hidden="true">＋</span>
+          </button>
+          <div id="contact-options" class="contact-options" hidden>
+            <a href="tel:9865303478"><span aria-hidden="true">☎</span><span><small>Call us</small>9865303478</span></a>
+            <a href="mailto:santos123@mail.com"><span aria-hidden="true">✉</span><span><small>Email us</small>santos123@mail.com</span></a>
+          </div>
+        </div>
+      </section>
+      <footer class="site-footer">
+        <div class="footer-main">
+          <div class="footer-brand">
+            <a class="site-brand" href="#home-page" data-home-target="home-page">
+              <span class="site-brand-mark" aria-hidden="true">IP</span>
+              <span>Interactive PDF Reader</span>
+            </a>
+            <p>Read, highlight, and keep your place.<br>Your PDFs stay on your device.</p>
+          </div>
+          <nav class="footer-column" aria-label="Reader tools">
+            <h2>Reader tools</h2>
+            <button type="button" data-tool="open">Open a PDF</button>
+            <button type="button" data-tool="media">Play video or audio</button>
+            <button type="button" data-tool="notes">Highlights &amp; notes</button>
+            <button type="button" data-tool="find">Search in PDF</button>
+            <button type="button" data-tool="bms">Bookmarks</button>
+          </nav>
+          <nav class="footer-column" aria-label="Explore">
+            <h2>Explore</h2>
+            <a href="#home-tools" data-home-target="home-tools">PDF tools</a>
+            <a href="#home-guide" data-home-target="home-guide">How it works</a>
+            <a href="#home-features" data-home-target="home-features">Features</a>
+            <a href="#home-contact" data-home-target="home-contact">Contact</a>
+          </nav>
+          <nav class="footer-column" aria-label="Your documents">
+            <h2>Your documents</h2>
+            <button type="button" data-tool="lib">My library</button>
+            <button type="button" data-tool="online">Open from a link</button>
+            <button type="button" data-tool="export">Back up your notes</button>
+            <button type="button" data-tool="import">Restore a backup</button>
+          </nav>
+          <div class="footer-contact">
+            <h2>Contact</h2>
+            <a href="mailto:santos123@mail.com">santos123@mail.com</a>
+            <a href="tel:9865303478">9865303478</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span>© <span id="footer-year"></span> Interactive PDF Reader</span>
+          <span class="footer-local"><span aria-hidden="true">◉</span> Private by design — files stay in this browser</span>
+          <a href="#home-page" data-home-target="home-page">Back to top ↑</a>
+        </div>
+      </footer>
+    </section>
+    <p id="empty">Drop a PDF here, or choose Open PDF.</p>
+    <section id="media-view" class="media-view" hidden aria-label="Media player">
+      <div class="media-stage">
+        <div class="media-stage-mark" aria-hidden="true">▶</div>
+        <video id="video-player" controls playsinline preload="metadata" hidden></video>
+        <audio id="audio-player" controls preload="metadata" hidden></audio>
+      </div>
+      <div class="media-details">
+        <div>
+          <span class="media-kicker">Playing locally in your browser</span>
+          <h1 id="media-heading"></h1>
+        </div>
+        <p id="media-status" role="status" aria-live="polite">Your media stays on this device and is not uploaded.</p>
+      </div>
+    </section>
+    <div id="pagewrap" hidden>
+      <canvas id="cv"></canvas>
+      <div id="hl"></div>
+      <div id="tl" class="textLayer"></div>
+    </div>
+  </main>
+  <aside>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-t="notes">Notes</button>
+      <button class="tab" role="tab" data-t="bms">Bookmarks</button>
+      <button class="tab" role="tab" data-t="find">Search</button>
+      <button class="tab" role="tab" data-t="lib">Library</button>
+    </div>
+    <div id="panel"></div>
+  </aside>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
